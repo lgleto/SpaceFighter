@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 /**
  * Created by lourencogomes on 13/11/17.
  */
@@ -26,12 +28,25 @@ public class GameView extends SurfaceView implements Runnable {
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
 
-    public GameView(Context context) {
+    private ArrayList<Star> stars = new ArrayList<>();
+    private ArrayList<Enemy> enemies = new ArrayList<>();
+
+    public GameView(Context context, int screenX, int screenY) {
         super(context);
-        player=new Player(context);
+        player=new Player(context,screenX,screenY);
 
         paint=new Paint();
         surfaceHolder=getHolder();
+
+        for (int i=0; i<100;i++){
+            Star s =new Star(screenX,screenY);
+            stars.add(s);
+        }
+
+        for (int i=0; i<3;i++){
+            Enemy enemy=new Enemy(context,screenX,screenY);
+            enemies.add(enemy);
+        }
     }
 
 
@@ -47,12 +62,33 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         player.update();
+
+        for (Star s:stars){
+            s.update(player.getSpeed());
+        }
+
+        for (Enemy e:enemies){
+            e.update(player.getSpeed());
+        }
     }
 
     private void draw() {
         if (surfaceHolder.getSurface().isValid()){
             canvas=surfaceHolder.lockCanvas();
             canvas.drawColor(Color.BLACK);
+
+            paint.setColor(Color.WHITE);
+
+            for (Star s: stars){
+                paint.setStrokeWidth(s.getStarWidth());
+                canvas.drawPoint(s.getX(),s.getY(),paint);
+            }
+
+            for (Enemy e: enemies){
+                canvas.drawBitmap(e.getBitmap(),e.getX(),e.getY(),paint);
+            }
+
+
             canvas.drawBitmap(player.getBitmap(),
                     player.getX(),
                     player.getY(),
@@ -77,7 +113,6 @@ public class GameView extends SurfaceView implements Runnable {
         }catch (InterruptedException e){
 
         }
-
     }
 
     public void resume(){
@@ -91,10 +126,11 @@ public class GameView extends SurfaceView implements Runnable {
 
         switch (event.getAction()&MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_UP:
-
+                player.stopBoosting();
                 Log.d("SpaceFighter", "up");
                 break;
             case MotionEvent.ACTION_DOWN:
+                player.setBoosting();
                 Log.d("SpaceFighter", "down");
                 break;
         }
