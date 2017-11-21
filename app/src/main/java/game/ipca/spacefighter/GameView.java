@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -22,19 +23,21 @@ public class GameView extends SurfaceView implements Runnable {
 
     private Thread gameThread = null;
 
-    private Player player;
+
 
     private Paint paint;
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
 
+    private Player player;
     private ArrayList<Star> stars = new ArrayList<>();
     private ArrayList<Enemy> enemies = new ArrayList<>();
+    private Boom boom;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
         player=new Player(context,screenX,screenY);
-
+        boom = new Boom(context);
         paint=new Paint();
         surfaceHolder=getHolder();
 
@@ -63,12 +66,22 @@ public class GameView extends SurfaceView implements Runnable {
     private void update() {
         player.update();
 
+        boom.setX(-250);
+        boom.setY(-250);
+
         for (Star s:stars){
             s.update(player.getSpeed());
         }
 
         for (Enemy e:enemies){
             e.update(player.getSpeed());
+
+            if (Rect.intersects(player.getDetectCollision(),e.getDetectCollision())){
+                boom.setX(e.getX());
+                boom.setY(e.getY());
+                e.setX(-200);
+
+            }
         }
     }
 
@@ -93,6 +106,9 @@ public class GameView extends SurfaceView implements Runnable {
                     player.getX(),
                     player.getY(),
                     paint);
+
+            canvas.drawBitmap(boom.getBitmap(),boom.getX(),boom.getY(),paint);
+
             surfaceHolder.unlockCanvasAndPost(canvas);
 
         }

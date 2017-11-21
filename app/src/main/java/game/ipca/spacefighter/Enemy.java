@@ -3,6 +3,7 @@ package game.ipca.spacefighter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 import java.util.Random;
 
@@ -20,6 +21,10 @@ public class Enemy {
         return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     private int x;
     private int y;
     private int speed=1;
@@ -27,6 +32,12 @@ public class Enemy {
     private int minY;
     private int maxX;
     private int minX;
+
+    public Rect getDetectCollision() {
+        return detectCollision;
+    }
+
+    private Rect detectCollision;
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -48,6 +59,8 @@ public class Enemy {
 
         x = screenX;
         y = generator.nextInt(maxY)-bitmap.getHeight();
+
+        detectCollision= new Rect (x,y, bitmap.getWidth(), bitmap.getHeight());
     }
 
     public void update(int playerSpeed){
@@ -55,13 +68,15 @@ public class Enemy {
         x -= speed;
 
         if (x < 0 - bitmap.getWidth()){
-
             x = maxX;
             Random generator= new Random();
             y = generator.nextInt(maxY) - -bitmap.getHeight();
             speed = generator.nextInt(10) + 10;
-
         }
+        detectCollision.left = x;
+        detectCollision.top = y;
+        detectCollision.right = x + bitmap.getWidth();
+        detectCollision.bottom = y + bitmap.getHeight();
     }
 
 

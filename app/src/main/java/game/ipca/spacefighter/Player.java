@@ -3,6 +3,7 @@ package game.ipca.spacefighter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 /**
  * Created by lourencogomes on 13/11/17.
@@ -24,6 +25,12 @@ public class Player {
 
     private int maxY;
     private int minY;
+
+    public Rect getDetectCollision() {
+        return detectCollision;
+    }
+
+    private Rect detectCollision;
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -51,6 +58,8 @@ public class Player {
 
         maxY = screenY - bitmap.getHeight();
         minY = 0;
+
+        detectCollision= new Rect (x,y, bitmap.getWidth(), bitmap.getHeight());
     }
 
     public void setBoosting(){
@@ -73,6 +82,11 @@ public class Player {
 
         if (y < minY) y = minY;
         if (y > maxY) y = maxY;
+
+        detectCollision.left = x;
+        detectCollision.top = y;
+        detectCollision.right = x + bitmap.getWidth();
+        detectCollision.bottom = y + bitmap.getHeight();
 
     }
 }
