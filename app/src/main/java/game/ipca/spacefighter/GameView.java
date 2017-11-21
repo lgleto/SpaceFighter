@@ -2,6 +2,7 @@ package game.ipca.spacefighter;
 
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +13,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
+
+import game.ipca.spacefighter.sprites.Boom;
+import game.ipca.spacefighter.sprites.Enemy;
+import game.ipca.spacefighter.sprites.Player;
+import game.ipca.spacefighter.sprites.Star;
 
 /**
  * Created by lourencogomes on 13/11/17.
@@ -36,8 +42,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
-        player=new Player(context,screenX,screenY);
-        boom = new Boom(context);
+        player=new Player(BitmapFactory.decodeResource(context.getResources(), R.drawable.player),screenX,screenY);
+        boom = new Boom(BitmapFactory.decodeResource(context.getResources(), R.drawable.boom), 0,0);
+
         paint=new Paint();
         surfaceHolder=getHolder();
 
@@ -47,7 +54,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         for (int i=0; i<3;i++){
-            Enemy enemy=new Enemy(context,screenX,screenY);
+            Enemy enemy=new Enemy(BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy),screenX,screenY);
             enemies.add(enemy);
         }
     }
@@ -64,7 +71,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        player.update();
+        player.update(0);
 
         boom.setX(-250);
         boom.setY(-250);

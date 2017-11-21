@@ -1,43 +1,29 @@
-package game.ipca.spacefighter;
+package game.ipca.spacefighter.sprites;
 
 import java.util.Random;
+
+import game.ipca.spacefighter.Sprite;
 
 /**
  * Created by lourencogomes on 14/11/17.
  */
 
-public class Star {
+public class Star extends Sprite {
 
-    public int getX() {
-        return x;
-    }
 
-    public int getY() {
-        return y;
-    }
-
-    private int x;
-    private int y;
     private int speed=0;
-    private int maxY;
-    private int minY;
-    private int maxX;
-    private int minX;
 
     public Star (int screenX, int screenY){
-        maxX=screenX;
-        maxY=screenY;
-        minX=0;
-        minY=0;
-
+        super(screenX,screenY);
         Random generator=new Random();
         speed = generator.nextInt(10);
-
         x = generator.nextInt(maxX);
         y = generator.nextInt(maxY);
     }
 
+    @Override
     public void update(int playerSpeed){
+        super.update(playerSpeed);
         x -= playerSpeed;
         x -= speed;
 
